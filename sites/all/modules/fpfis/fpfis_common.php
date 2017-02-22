@@ -30,6 +30,7 @@
  $conf['gelf_log_host'] = FPFIS_GELF_SERVER;
  $conf['gelf_log_port'] = FPFIS_GELF_PORT;
  $conf['gelf_log_mtu'] = 1024;
+
 /**
  * Proxy setup :
  */
