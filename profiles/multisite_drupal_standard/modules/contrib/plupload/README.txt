@@ -38,7 +38,7 @@ $form['my_element'] = array(
   '#upload_validators' => array(
     'file_validate_extensions' => array('jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp'),
     'my_custom_file_validator' => array('some validation criteria'),
-  );
+  ),
   '#plupload_settings' => array(
     'runtimes' => 'html5',
     'chunk_size' => '1mb',

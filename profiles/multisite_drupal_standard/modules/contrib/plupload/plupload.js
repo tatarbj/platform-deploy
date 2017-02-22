@@ -115,6 +115,10 @@ Drupal.behaviors.pluploadform = {
                     for (var attr in originalFormAttributes) {
                       $form.attr(attr, originalFormAttributes[attr]);
                     }
+                    // We're going to automatically submit the form.
+                    // Disable the button until we do it.
+                    $("[type=submit]", $form).attr("disabled", true);
+
                     // Click a specific element if one is specified.
                     if (settings.plupload[id].submit_element) {
                       $(settings.plupload[id].submit_element).click();
