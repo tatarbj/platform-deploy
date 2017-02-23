@@ -1795,8 +1795,6 @@ function workbench_moderation_store($node) {
       watchdog('Workbench moderation', 'Failed to save node revision: node was deleted before shutdown function executed.');
       return;
     }
-    $live_revision_original = clone($live_revision);
-    $live_revision->original = $live_revision_original;
     $live_revision->status = 1;
   }
   else {
@@ -1821,6 +1819,9 @@ function workbench_moderation_store($node) {
       $live_revision->{$field_name} += $empty_values;
     }
   }
+
+  // Set original node for current vid
+  $live_revision->original = node_load($live_revision->nid, $live_revision->vid, TRUE);
 
   // Save the node.
   $live_revision->revision = 0;
