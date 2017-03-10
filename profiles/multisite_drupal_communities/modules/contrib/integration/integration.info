@@ -10,9 +10,9 @@ dependencies[] = entity
 dependencies[] = registry_autoload
 registry_autoload[] = PSR-4
 
-; Information added by Drupal.org packaging script on 2016-12-09
+; Information added by Drupal.org packaging script on 2017-03-10
 version = "7.x-1.x-dev"
 core = "7.x"
 project = "integration"
-datestamp = "1481286489"
+datestamp = "1489150207"
 
