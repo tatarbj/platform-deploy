@@ -23,6 +23,7 @@ $fpfis_conf = [
             'group' => 'Unknown'
         ],
     'https' => true,
+    'reverse_proxy' => true,
     'hostname' => 'webgate.ec.europa.eu',
     'path' => '/multisite/test',
 

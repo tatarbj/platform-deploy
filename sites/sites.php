@@ -42,9 +42,9 @@ if(!empty($fpfis_conf['ecas'])) {
  * Gelf log setup :
  */
 if(array_key_exists('gelf_log',$fpfis_conf)) {
-    $conf['gelf_log_group'] = $fpfis_conf['gelf_log']['gelf_group'];
-    $conf['gelf_log_host'] = $fpfis_conf['gelf_log']['gelf_host'];
-    $conf['gelf_log_port'] = $fpfis_conf['gelf_log']['gelf_group'];
+    $conf['gelf_log_group'] = $fpfis_conf['gelf_log']['group'];
+    $conf['gelf_log_host'] = $fpfis_conf['gelf_log']['host'];
+    $conf['gelf_log_port'] = $fpfis_conf['gelf_log']['group'];
     $conf['gelf_log_mtu'] = 1024;
 }
 
