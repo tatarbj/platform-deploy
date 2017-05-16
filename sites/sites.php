@@ -12,7 +12,7 @@ if(!defined('DRUPAL_ROOT')) {
     define('DRUPAL_ROOT',dirname(dirname(__DIR__)));
 }
 
-if(file_exists(DRUPAL_ROOT.'/sites/default/settings.salt.php')) {
+if(file_exists(DRUPAL_ROOT.'/sites/default/settings.external.php')) {
     require DRUPAL_ROOT.'/sites/default/settings.external.php';
 } else {
     require DRUPAL_ROOT.'/sites/default/settings.fpfis.php';
