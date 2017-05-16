@@ -8,6 +8,24 @@
 
 Drupal.media = Drupal.media || {};
 
+if (typeof CKEDITOR !== 'undefined') {
+  CKEDITOR.on('instanceReady', function (event) {
+    event.editor.on('selectionChange', function (event) {
+      // If the cursor is located inside the <span> tag directly (not inside
+      // the filename link within it), put the cursor directly after the <span>
+      var $selected_element = $(event.data.selection.getStartElement().$);
+
+      if ($selected_element.is('a') && $selected_element.parent().hasClass('media-element')) {
+        var parent = new CKEDITOR.dom.element($selected_element.parent().get(0));
+        event.data.selection.selectElement(parent);
+        selected_ranges = event.data.selection.getRanges();
+        selected_ranges[0].collapse(false);
+        event.data.selection.selectRanges(selected_ranges);
+      }
+    });
+  });
+}
+
 /**
  * Register the plugin with WYSIWYG.
  */
