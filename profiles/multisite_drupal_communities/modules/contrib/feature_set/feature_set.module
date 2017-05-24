@@ -494,4 +494,7 @@ function feature_set_preprocess_feature_set_admin_form(&$variables) {
     render($feature_set_category['form']['form_build_id']) .
     render($feature_set_category['form']['form_token']) .
     render($feature_set_category['form']['form_id']);
+
+  drupal_add_js('misc/form.js');
+  drupal_add_js('misc/collapse.js');
 }

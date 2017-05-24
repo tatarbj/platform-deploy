@@ -7,7 +7,7 @@ dependencies[] = title
 dependencies[] = entity
 dependencies[] = entity_translation
 
-; Information added by drush on 2014-11-22
-version = "7.x-1.0-alpha7+12-dev"
+; Information added by drush on 2017-01-13
+version = "7.x-1.0-alpha9+1-dev"
 project = "title"
-datestamp = "1416612554"
+datestamp = "1484304273"

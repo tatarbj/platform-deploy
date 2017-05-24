@@ -128,9 +128,9 @@ function title_field_text_sync_get($entity_type, $entity, $legacy_field, $info, 
   $format = 'plain_text';
 
   $info += array(
-    'additional keys' => array (
+    'additional keys' => array(
       'format' => 'format',
-    )
+    ),
   );
 
   $format_key = $info['additional keys']['format'];
@@ -139,9 +139,9 @@ function title_field_text_sync_get($entity_type, $entity, $legacy_field, $info, 
   // language.
   if (!empty($entity->{$field_name}[$langcode]) && is_array($entity->{$field_name}[$langcode])) {
     $item = $entity->{$field_name}[$langcode][0] + array(
-        'value' => NULL,
-        'format' => NULL,
-      );
+      'value' => NULL,
+      'format' => NULL,
+    );
     $value = $item['value'];
     $format = $item['format'];
   }
@@ -167,9 +167,9 @@ function title_field_text_with_summary_sync_get($entity_type, $entity, $legacy_f
   $format = NULL;
 
   $info += array(
-    'additional keys' => array (
+    'additional keys' => array(
       'format' => 'format',
-    )
+    ),
   );
 
   $format_key = $info['additional keys']['format'];
@@ -178,9 +178,9 @@ function title_field_text_with_summary_sync_get($entity_type, $entity, $legacy_f
   // language.
   if (!empty($entity->{$field_name}[$langcode]) && is_array($entity->{$field_name}[$langcode])) {
     $item = $entity->{$field_name}[$langcode][0] + array(
-        'value' => NULL,
-        'format' => NULL,
-      );
+      'value' => NULL,
+      'format' => NULL,
+    );
     $value = $item['value'];
     $format = $item['format'];
   }

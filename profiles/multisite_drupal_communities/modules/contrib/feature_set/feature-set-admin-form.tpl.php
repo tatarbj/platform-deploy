@@ -8,23 +8,16 @@
  * - $feature_set_row: raw list of features, ungrouped
  * - $feature_set_input: rendered form input (submit and hidden fields)
  */
-
 ?>
-
 <?php foreach ($feature_set_category['category'] as $category => $features) : ?>
-<div class="table-responsive">
-  <table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th colspan="2">
-          <?php print $category; ?>
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-    <?php foreach ($features as $key => $item) : ?>
-      <tr>
+<fieldset class="collapsible form-wrapper collapsed">
+  <legend>
+    <span class="fieldset-legend"><?php print $category; ?></span>
+  </legend>
+  <div class="fieldset-wrapper">
+  <table>
+    <?php $i = 0; foreach ($features as $key => $item) : ?>
+      <tr class="<?php $i % 2 ? print 'even' : print 'odd';?>">
         <td>
           <?php
             if (!empty($item['#featuresetinfo']['featureset'])) :
@@ -33,16 +26,23 @@
             if (!empty($item['#featuresetinfo']['description'])) :
               print '<br /><small>' . $item['#featuresetinfo']['description'] . '</small>';
             endif;
+            if (!empty($item['#featuresetinfo']['description'])) :
+              print '<br /><small>' .
+                l(t('See @name documentation', array('@name' => $item['#featuresetinfo']['featureset'])),
+                  $item['#featuresetinfo']['documentation'],
+                  array('attributes' => array('target' => '_blank')))
+                . '</small>';
+            endif;
           ?>
         </td>
         <td>
           <?php print render($item); ?>
         </td>
       </tr>
-    <?php endforeach ?>
-    </tbody>
+    <?php $i++; endforeach ?>
   </table>
-</div>
+  </div>
+</fieldset>
 <?php endforeach; ?>
 
 <?php
