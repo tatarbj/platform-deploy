@@ -8,20 +8,83 @@
 
 Drupal.media = Drupal.media || {};
 
+/**
+ * Prevent media markup from being left behind in the WYSIWYG during editing.
+ *
+ * When an embedded document is placed in the WYSIWYG, and later selected and
+ * either (1) deleted, or (2) overwritten with other text, it is easy for the
+ * visible markup (i.e., the file icon and filename) to completely disappear
+ * but the underlying, invisible media token to be left behind in the HTML. If
+ * this happens, then after the content is saved the embedded document will
+ * reappear despite having already been deleted from the user's perspective.
+ *
+ * This function fixes the issue by forcing the full media element (including
+ * the invisible token) to be selected once enough of it is.
+ *
+ * In addition to the above, this function also fixes a related problem in
+ * which after embedding the document in the WYSIWYG (or placing the cursor
+ * near it later on), the cursor is located inside the element itself (inside
+ * the <span> tag). Anything typed from this position will be ignored, and
+ * anything typed after hitting the "return" key from this position will be
+ * replaced with a duplicate copy of the document (since CKEditor treats the
+ * <span> as inline styling which should be preserved across line breaks). To
+ * mitigate this, the code in this function forces the cursor outside of the
+ * <span> tag whenever it is placed directly inside it.
+ *
+ * @todo: Make this work for editors other than CKEditor.
+ */
 if (typeof CKEDITOR !== 'undefined') {
   CKEDITOR.on('instanceReady', function (event) {
     event.editor.on('selectionChange', function (event) {
+      // If something more than just the filename link was selected, change the
+      // selection to encompass the entire media element.
+      var $selected_element = $(event.data.selection.getStartElement().$);
+      if (!$selected_element.is('a') && !$selected_element.hasClass('media-element')) {
+        var $full_element = $selected_element.closest('.media-element');
+        if ($full_element.length) {
+          var full_element = new CKEDITOR.dom.element($full_element.get(0));
+          event.data.selection.selectElement(full_element);
+        }
+      }
       // If the cursor is located inside the <span> tag directly (not inside
       // the filename link within it), put the cursor directly after the <span>
-      var $selected_element = $(event.data.selection.getStartElement().$);
-
-      if ($selected_element.is('a') && $selected_element.parent().hasClass('media-element')) {
+      // tag instead. We do this by finding the parent element, selecting that,
+      // and that moving the cursor to the end of that selection. See
+      // http://stackoverflow.com/questions/4536532/how-to-set-cursor-position-to-end-of-text-in-ckeditor
+      else if ($selected_element.is('span') && $selected_element.hasClass('media-element')) {
         var parent = new CKEDITOR.dom.element($selected_element.parent().get(0));
         event.data.selection.selectElement(parent);
         selected_ranges = event.data.selection.getRanges();
         selected_ranges[0].collapse(false);
         event.data.selection.selectRanges(selected_ranges);
       }
+    });
+  });
+}
+
+if (typeof tinymce !== 'undefined' && tinymce.majorVersion == "3") {
+  tinymce.onAddEditor.add(function(cm, ed) {
+    ed.onNodeChange.add(function(ed, cm, e) {
+      tinymce.each(ed.dom.select('span.media-element', e.node), function(n) {
+        if (!n.hasChildNodes() || (n.hasChildNodes() && n.firstChild.nodeName.toLowerCase() == "br" )) {
+          var parent = n.parentNode;
+          // Workaround for Chrome
+          if (tinymce.isWebKit) {
+              ed.selection.select(n);
+              ed.dom.remove(n); // Remove faulty node
+              // The parent is empty, so fake some content,
+              // otherwise the cursor jumps to the start of the editor.
+              parent.innerHTML = "&nbsp;";
+              ed.selection.select(parent);
+              ed.selection.collapse(true);
+              ed.selection.setContent("");
+          }
+          // All other browsers (even IE) work fine
+          else {
+            ed.dom.remove(parent);
+          }
+        }
+      });
     });
   });
 }

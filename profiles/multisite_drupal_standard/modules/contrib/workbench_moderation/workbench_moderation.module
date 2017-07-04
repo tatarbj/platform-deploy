@@ -2356,7 +2356,7 @@ function workbench_moderation_set_state_action($node, $context) {
 
   // Check access to perform this moderation, on the latest revision of the node
   $node = workbench_moderation_node_current_load($node);
-  if (_workbench_moderation_moderate_access($node, $context['state'])) {
+  if (!empty($context['force_transition']) || _workbench_moderation_moderate_access($node, $context['state'])) {
     $node->workbench_moderation_state_new = $context['state'];
     $node->revision = 1;
     $node->log = "Bulk moderation state change.";
