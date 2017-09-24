@@ -19,3 +19,14 @@ if(file_exists($strippedRoot.'.conf.d/settings.php')) {
     define('FPFIS_SALT_CONFIG_USED', false);
 }
 define('FPFIS_ENV_RUNNING', strlen(getenv('FPFIS_ENVIRONMENT')) > 0);
+
+/**
+ * FPFIS easy conf for CI and dev
+ */
+
+if(preg_match('/ci.fpfis.tech.ec.europa.eu$/',$_SERVER['HTTP_HOST'])) {
+  $base_url = 'https://'.$_SERVER['HTTP_HOST'];
+  $https = true;
+} elseif (preg_match('/web$/',$_SERVER['HTTP_HOST']) || preg_match('/localhost$/',$_SERVER['HTTP_HOST'])) {
+  $base_url = 'http://'.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'];
+}
