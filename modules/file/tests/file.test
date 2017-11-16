@@ -1069,9 +1069,9 @@ class FileFieldRevisionTestCase extends FileFieldTestCase {
     clearstatcache();
     $this->assertFileIsTemporary($node_file_r3, 'Second file is now set to temporary after deleting third revision, since it is no longer being used by any other nodes.');
 
-    // Delete the entire node and check that the original file is temporary.
+    // Delete the entire node and check that the original file is deleted.
     $this->drupalPost('node/' . $nid . '/delete', array(), t('Delete'));
-    $this->assertFileIsTemporary($node_file_r1, 'Original file is set to temporary after deleting the entire node with two revisions remaining.');;
+    $this->assertFileIsTemporary($node_file_r1, 'Original file is set to temporary after deleting the entire node with two revisions remaining.');
   }
 }
 
@@ -1537,7 +1537,8 @@ class FilePrivateTestCase extends FileFieldTestCase {
     $this->drupalGet(file_create_url($node_file->uri));
     $this->assertResponse(200, 'Confirmed that the generated URL is correct by downloading the shipped file.');
     $this->drupalLogOut();
-    $this->drupalGet(file_create_url($node_file->uri));
+    $file_url = file_create_url($node_file->uri);
+    $this->drupalGet($file_url);
     $this->assertResponse(403, 'Confirmed that access is denied for the file without the needed permission.');
 
     // Test with the field that should deny access through field access.
@@ -1545,7 +1546,6 @@ class FilePrivateTestCase extends FileFieldTestCase {
     $nid = $this->uploadNodeFile($test_file, $no_access_field_name, $type_name, TRUE, array('private' => TRUE));
     $node = node_load($nid, NULL, TRUE);
     $node_file = (object) $node->{$no_access_field_name}[LANGUAGE_NONE][0];
-
     // Ensure the file cannot be downloaded.
     $file_url = file_create_url($node_file->uri);
     $this->drupalGet($file_url);
@@ -1561,7 +1561,8 @@ class FilePrivateTestCase extends FileFieldTestCase {
     $this->assertTrue(!empty($new_node), 'Node was created.');
     $this->assertUrl('node/' . $new_node->nid);
     $this->assertNoRaw($node_file->filename, 'File without view field access permission does not appear after attempting to attach it to a new node.');
-    $this->drupalGet(file_create_url($node_file->uri));
+    $file_url = file_create_url($node_file->uri);
+    $this->drupalGet($file_url);
     $this->assertResponse(403, 'Confirmed that access is denied for the file without view field access permission after attempting to attach it to a new node.');
 
     // Delete the node.
@@ -1581,6 +1582,80 @@ class FilePrivateTestCase extends FileFieldTestCase {
     $this->drupalLogin($account);
     $this->drupalGet($file_url);
     $this->assertResponse(403, 'Confirmed that access is denied for another user to the temporary file.');
+
+    // As an anonymous user, create a temporary file with no references and
+    // confirm that only the session that uploaded it may view it.
+    $this->drupalLogout();
+    user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array(
+      "create $type_name content",
+      'access content',
+    ));
+    $test_file = $this->getTestFile('text');
+    $this->drupalGet('node/add/' . $type_name);
+    $edit = array('files[' . $field_name . '_' . LANGUAGE_NONE . '_0]' => drupal_realpath($test_file->uri));
+    $this->drupalPost(NULL, $edit, t('Upload'));
+    $files = file_load_multiple(array(), array('uid' => 0));
+    $this->assertEqual(1, count($files), 'Loaded one anonymous file.');
+    $file = end($files);
+    $this->assertNotEqual($file->status, FILE_STATUS_PERMANENT, 'File is temporary.');
+    $usage = file_usage_list($file);
+    $this->assertFalse($usage, 'No file usage found.');
+    $file_url = file_create_url($file->uri);
+    $this->drupalGet($file_url);
+    $this->assertResponse(200, 'Confirmed that the anonymous uploader has access to the temporary file.');
+    // Close the prior connection and remove the session cookie.
+    $this->curlClose();
+    $this->cookies = array();
+    $this->drupalGet($file_url);
+    $this->assertResponse(403, 'Confirmed that another anonymous user cannot access the temporary file.');
+
+    // As an anonymous user, create a permanent file that is referenced by a
+    // published node and confirm that all anonymous users may view it.
+    $test_file = $this->getTestFile('text');
+    $this->drupalGet('node/add/' . $type_name);
+    $edit = array();
+    $edit['title'] = $this->randomName();
+    $edit['files[' . $field_name . '_' . LANGUAGE_NONE . '_0]'] = drupal_realpath($test_file->uri);
+    $this->drupalPost(NULL, $edit, t('Save'));
+    $new_node = $this->drupalGetNodeByTitle($edit['title']);
+    $file = file_load($new_node->{$field_name}[LANGUAGE_NONE][0]['fid']);
+    $this->assertEqual($file->status, FILE_STATUS_PERMANENT, 'File is permanent.');
+    $usage = file_usage_list($file);
+    $this->assertTrue($usage, 'File usage found.');
+    $file_url = file_create_url($file->uri);
+    $this->drupalGet($file_url);
+    $this->assertResponse(200, 'Confirmed that the anonymous uploader has access to the permanent file that is referenced by a published node.');
+    // Close the prior connection and remove the session cookie.
+    $this->curlClose();
+    $this->cookies = array();
+    $this->drupalGet($file_url);
+    $this->assertResponse(200, 'Confirmed that another anonymous user also has access to the permanent file that is referenced by a published node.');
+
+    // As an anonymous user, create a permanent file that is referenced by an
+    // unpublished node and confirm that no anonymous users may view it (even
+    // the session that uploaded the file) because they cannot view the
+    // unpublished node.
+    $test_file = $this->getTestFile('text');
+    $this->drupalGet('node/add/' . $type_name);
+    $edit = array();
+    $edit['title'] = $this->randomName();
+    $edit['files[' . $field_name . '_' . LANGUAGE_NONE . '_0]'] = drupal_realpath($test_file->uri);
+    $this->drupalPost(NULL, $edit, t('Save'));
+    $new_node = $this->drupalGetNodeByTitle($edit['title']);
+    $new_node->status = NODE_NOT_PUBLISHED;
+    node_save($new_node);
+    $file = file_load($new_node->{$field_name}[LANGUAGE_NONE][0]['fid']);
+    $this->assertEqual($file->status, FILE_STATUS_PERMANENT, 'File is permanent.');
+    $usage = file_usage_list($file);
+    $this->assertTrue($usage, 'File usage found.');
+    $file_url = file_create_url($file->uri);
+    $this->drupalGet($file_url);
+    $this->assertResponse(403, 'Confirmed that the anonymous uploader cannot access the permanent file when it is referenced by an unpublished node.');
+    // Close the prior connection and remove the session cookie.
+    $this->curlClose();
+    $this->cookies = array();
+    $this->drupalGet($file_url);
+    $this->assertResponse(403, 'Confirmed that another anonymous user cannot access the permanent file when it is referenced by an unpublished node.');
   }
 }
 

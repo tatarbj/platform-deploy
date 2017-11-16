@@ -3067,7 +3067,7 @@ function system_cron() {
     $result = db_query('SELECT fid FROM {file_managed} WHERE status <> :permanent AND timestamp < :timestamp', array(
       ':permanent' => FILE_STATUS_PERMANENT,
       ':timestamp' => REQUEST_TIME - $age
-    ));
+     ));
     foreach ($result as $row) {
       if ($file = file_load($row->fid)) {
         $references = file_usage_list($file);

@@ -90,9 +90,7 @@ files[] = includes/integration_test.categories.inc
 files[] = includes/integration_test.news.inc
 hidden = 1
 
-; Information added by Drupal.org packaging script on 2017-03-30
-version = "7.x-1.x-dev"
-core = "7.x"
+; Information added by drush on 2017-03-30
+version = "2b29abc8a34f051fbb82c47deeb02e4456faf995"
 project = "integration"
-datestamp = "1490881685"
-
+datestamp = "1490881482"

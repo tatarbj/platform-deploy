@@ -38,37 +38,7 @@ class NexteuropaNewsroomBuilder {
     $year = self::getYear($arg3);
     $current_date->setDate($year, $month, $day);
 
-    return new NexteuropaNewsroomAgendaSchedule($type, $topic, $current_date);
-  }
-
-  /**
-   * Builds Agenda item based on the current date.
-   *
-   * @param string $view
-   *   View (presentation type): schedule, month, week, day.
-   * @param string $type
-   *   Newsroom type.
-   * @param array $topics
-   *   Newsroom topic.
-   * @param object $date
-   *   Current date.
-   *
-   * @return NexteuropaNewsroomAgenda|null
-   *   Agenda item.
-   */
-  public static function buildAgenda($view, $type, $topics, $date, $operator = NEXTEUROPA_NEWSROOM_TOPIC_OPERATOR_OR) {
-    $agenda = NULL;
-    switch ($view) {
-      case NexteuropaNewsroomAgenda::AGENDA_VIEW_SCHEDULE_BLOCK:
-        $agenda = new NexteuropaNewsroomAgendaBlockSchedule($type, $topics, $date, $operator);
-        break;
-
-      default:
-        $agenda = new NexteuropaNewsroomAgendaSchedule($type, $topics, $date);
-
-    }
-
-    return $agenda;
+    return new NexteuropaNewsroomAgenda($type, $topic, $current_date);
   }
 
   /**
@@ -89,6 +59,7 @@ class NexteuropaNewsroomBuilder {
         $description = 'Imports Newsroom Items from the Newsroom service.';
         $entity_type = 'node';
         $bundle = NEXTEUROPA_NEWSROOM_CONTENT_TYPE;
+        $import_period = 0;
         $field_mapping = self::getItemImporterMappings();
         break;
 
@@ -127,7 +98,7 @@ class NexteuropaNewsroomBuilder {
         break;
     }
 
-    return new NewsroomImporterGenerator($importer_id, $field_mapping, $title, $description, $rss_context, $entity_type, $bundle, $import_period);
+    return new NexteuropaNewsroomImporterGenerator($importer_id, $field_mapping, $title, $description, $rss_context, $entity_type, $bundle, $import_period);
   }
 
   /**
@@ -797,18 +768,16 @@ class NexteuropaNewsroomBuilder {
    *   Start date.
    * @param string|null $end_date
    *   End date.
-   * @param string $ec_content
-   *   EC content.
    *
    * @return NexteuropaNewsroomPage
    *   NexteuropaNewsroomPage object.
    */
-  public static function buildNewsroomPage($type_url = NULL, $topic_url = NULL, $start_date = NULL, $end_date = NULL, $ec_content = NEXTEUROPA_NEWSROOM_EC) {
+  public static function buildNewsroomPage($type_url = NULL, $topic_url = NULL, $start_date = NULL, $end_date = NULL) {
     $type = self::getType($type_url);
     $topic = self::getTopic($topic_url);
     $start_date = self::getDate($start_date);
     $end_date = self::getDate($end_date);
-    return new NexteuropaNewsroomPage($type, $topic, $start_date, $end_date, $ec_content);
+    return new NexteuropaNewsroomPage($type, $topic, $start_date, $end_date);
   }
 
 }

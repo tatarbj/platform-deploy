@@ -562,18 +562,17 @@ function nexteuropa_newsroom_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Meta',
-    'weight' => '1',
+    'weight' => '0',
     'children' => array(
-      0 => 'field_newsroom_item_type',
-      1 => 'post_date',
+      0 => 'field_newsroom_item_date',
+      1 => 'newsroom_content_type_label',
     ),
     'format_type' => 'meta_wrapper',
     'format_settings' => array(
-      'formatter' => '',
+      'label' => 'Meta',
       'instance_settings' => array(
+        'classes' => 'meta group-meta field-group-meta_wrapper',
         'modifier' => '',
-        'classes' => 'group-newsroom-meta field-group-meta_wrapper',
-        'required_fields' => 1,
       ),
     ),
   );
@@ -590,18 +589,17 @@ function nexteuropa_newsroom_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Meta data',
-    'weight' => '1',
+    'weight' => '0',
     'children' => array(
       0 => 'field_newsroom_item_date',
-      1 => 'field_newsroom_item_type',
+      1 => 'newsroom_content_type_label',
     ),
     'format_type' => 'meta_wrapper',
     'format_settings' => array(
-      'formatter' => '',
+      'label' => 'Meta data',
       'instance_settings' => array(
+        'classes' => 'meta group-meta field-group-meta_wrapper',
         'modifier' => '',
-        'classes' => 'group-newsroom-meta field-group-meta_wrapper',
-        'required_fields' => 1,
       ),
     ),
   );
@@ -618,19 +616,18 @@ function nexteuropa_newsroom_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Meta data',
-    'weight' => '1',
+    'weight' => '0',
     'children' => array(
       0 => 'field_newsroom_item_date',
-      1 => 'field_newsroom_item_type',
-      2 => 'field_newsroom_item_venue',
+      1 => 'field_newsroom_item_venue',
+      2 => 'newsroom_content_type_label',
     ),
     'format_type' => 'meta_wrapper',
     'format_settings' => array(
-      'formatter' => '',
+      'label' => 'Meta data',
       'instance_settings' => array(
+        'classes' => 'meta group-meta field-group-meta_wrapper',
         'modifier' => '',
-        'classes' => 'group-newsroom-meta field-group-meta_wrapper',
-        'required_fields' => 1,
       ),
     ),
   );
@@ -647,18 +644,17 @@ function nexteuropa_newsroom_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Meta',
-    'weight' => '1',
+    'weight' => '0',
     'children' => array(
-      0 => 'field_newsroom_item_type',
-      1 => 'post_date',
+      0 => 'field_newsroom_item_date',
+      1 => 'newsroom_content_type_label',
     ),
     'format_type' => 'meta_wrapper',
     'format_settings' => array(
-      'formatter' => '',
+      'label' => 'Meta',
       'instance_settings' => array(
+        'classes' => 'meta group-meta field-group-meta_wrapper',
         'modifier' => '',
-        'classes' => 'group-newsroom-meta field-group-meta_wrapper',
-        'required_fields' => 1,
       ),
     ),
   );
@@ -678,15 +674,14 @@ function nexteuropa_newsroom_field_group_info() {
     'weight' => '0',
     'children' => array(
       0 => 'field_newsroom_item_date',
-      1 => 'field_newsroom_item_type',
+      1 => 'newsroom_content_type_label',
     ),
     'format_type' => 'meta_wrapper',
     'format_settings' => array(
-      'formatter' => '',
+      'label' => 'Meta',
       'instance_settings' => array(
+        'classes' => 'meta group-meta field-group-meta_wrapper',
         'modifier' => '',
-        'classes' => 'group-newsroom-meta field-group-meta_wrapper',
-        'required_fields' => 1,
       ),
     ),
   );
@@ -797,13 +792,13 @@ function nexteuropa_newsroom_field_group_info() {
     'children' => array(
       0 => 'field_newsroom_import_name',
       1 => 'field_newsroom_type',
-      2 => 'field_newsroom_date_label',
-      3 => 'field_newsroom_display_date',
-      4 => 'field_newsroom_type_id',
-      5 => 'field_newsroom_direct_link',
-      6 => 'field_newsroom_highlighted',
-      7 => 'field_newsroom_read_more_text',
-      8 => 'field_newsroom_resp_person_label',
+      2 => 'field_newsroom_type_id',
+      3 => 'field_newsroom_highlighted',
+      4 => 'field_newsroom_resp_person_label',
+      5 => 'field_newsroom_read_more_text',
+      6 => 'field_newsroom_display_date',
+      7 => 'field_newsroom_direct_link',
+      8 => 'field_newsroom_date_label',
     ),
     'format_type' => 'tab',
     'format_settings' => array(
