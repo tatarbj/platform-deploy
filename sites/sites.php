@@ -26,8 +26,8 @@ define('FPFIS_ENV_RUNNING', strlen(getenv('FPFIS_ENVIRONMENT')) > 0);
 if(preg_match('/ci.fpfis.tech.ec.europa.eu$/',$_SERVER['HTTP_HOST'])) {
   $base_url = 'https://'.$_SERVER['HTTP_HOST'];
   $https = true;
-  putenv('FPFIS_ENVIRONMENT', 'CI');
+  putenv('FPFIS_ENVIRONMENT=CI');
 } elseif (preg_match('/web$/',$_SERVER['HTTP_HOST']) || preg_match('/localhost$/',$_SERVER['HTTP_HOST'])) {
   $base_url = 'http://'.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'];
-  putenv('FPFIS_ENVIRONMENT', 'development');
+  putenv('FPFIS_ENVIRONMENT=development');
 }
