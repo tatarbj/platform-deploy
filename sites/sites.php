@@ -12,13 +12,16 @@ if(file_exists($strippedRoot.'.conf.d/settings.php')) {
     // This file was dropped for us by config management :
     // @See : https://github.com/ec-europa/salt-reference/blob/master/sites/drupal7/settings.php.jinja
     putenv('DRUPAL_LOCAL_SETTINGS_LOCATION='.$strippedRoot.'.conf.d/settings.php');
-    define('FPFIS_SALT_CONFIG_USED', true);
+    if(!defined("FPFIS_SALT_CONFIG_USED"))
+        define('FPFIS_SALT_CONFIG_USED', true);
 } else {
     // Old behavior :
     putenv('DRUPAL_LOCAL_SETTINGS_LOCATION=' . $strippedRoot . '/../settings.common.php');
-    define('FPFIS_SALT_CONFIG_USED', false);
+    if(!defined("FPFIS_SALT_CONFIG_USED"))
+      define('FPFIS_SALT_CONFIG_USED', false);
 }
-define('FPFIS_ENV_RUNNING', strlen(getenv('FPFIS_ENVIRONMENT')) > 0);
+if(!defined("FPFIS_ENV_RUNNING"))
+  define('FPFIS_ENV_RUNNING', strlen(getenv('FPFIS_ENVIRONMENT')) > 0);
 
 /**
  * FPFIS easy conf for CI and dev
