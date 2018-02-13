@@ -1,4 +1,4 @@
 {
-  name: "ec-europa/platform-deploy",
-  type: "drupal-core"
+  "name": "ec-europa/platform-deploy",
+  "type": "drupal-core"
 }
