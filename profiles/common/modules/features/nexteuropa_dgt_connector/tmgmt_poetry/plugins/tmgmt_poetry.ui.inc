@@ -216,7 +216,7 @@ class TMGMTPoetryTranslatorUIController extends TMGMTDefaultTranslatorUIControll
 
         }
         if (in_array($language_job_item->state, array(TMGMT_JOB_ITEM_STATE_REVIEW, TMGMT_JOB_ITEM_STATE_ACCEPTED))) {
-          $options[$language->language]['operations']  = l(t('View'), 'admin/tmgmt/items/' . $language_job_item->tjiid, array('query' => array('destination' => 'admin/tmgmt/jobs/' . $job->tjid)));
+          $options[$language->language]['operations'] = l(t('View'), 'admin/tmgmt/items/' . $language_job_item->tjiid, array('query' => array('destination' => 'admin/tmgmt/jobs/' . $job->tjid)));
         }
       }
 
@@ -303,8 +303,9 @@ class TMGMTPoetryTranslatorUIController extends TMGMTDefaultTranslatorUIControll
       '#default_value' => (!empty($job->settings['contacts']['responsable']) ? $job->settings['contacts']['responsable'] : $contacts['responsable']),
     );
 
-    // Load translator settings : Organization.
-    $organization = $translator->getSetting('organization');
+    // Load translator settings from submitted job: Organization.
+    $new_org_info = (isset($job->settings['organization']) || array_key_exists('organization', (array) $job->settings));
+    $organization = ($new_org_info) ? $job->settings['organization'] : $translator->getSetting('organization');
     $form['organization'] = array(
       '#type' => 'fieldset',
       '#title' => t('Organization'),
