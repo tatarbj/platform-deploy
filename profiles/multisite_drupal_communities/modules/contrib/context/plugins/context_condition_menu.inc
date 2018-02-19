@@ -16,7 +16,7 @@ class context_condition_menu extends context_condition {
       foreach ($menus as $key => $link) {
         $id = explode(':', $key);
         if ($id[1] == '0') {
-          $root_menus[$id[0]] = $link;
+          $root_menus[$id[0]] = check_plain($link);
         }
         else {
           if (!is_array($link)) {

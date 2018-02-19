@@ -81,32 +81,36 @@ function workbench_og_og_permission() {
  * Implements hook_node_access_records().
  *
  * This function is responsible to define the access records that allow users
- * of the same group to access unpublished nodes.
+ * of the same group to access unpublished nodes. Grants are only set if node
+ * is unpublished.
  */
 function workbench_og_node_access_records($node) {
 
-  // Grants are only set if node is unpublished.  
-  if ($node->status) {
+  if (!isset($node->workbench_moderation['my_revision'])) {
     return;
   }
-  
-  $grants = array();
-  // Fet the groups defined in the node.
-  $groups = og_get_entity_groups($entity_type = 'node', $node);
 
-  // For each group set a grant.
-  if (isset ($groups['node']) && !empty($groups)) {
-    foreach ($groups['node'] as $gid => $value) {
-      $grants[] = array(
-        'realm' => 'workbench_moderation_og',
-        'gid' => $value,
-        'grant_view' => 1,
-        'grant_update' => 0,
-        'grant_delete' => 0,
-        'priority' => 2,
-      );
+  // If revision is not published we need to grant access to group.
+  if (!$node->workbench_moderation['my_revision']->published) {
+
+    $grants = array();
+    // Fet the groups defined in the node.
+    $groups = og_get_entity_groups($entity_type = 'node', $node);
+
+    // For each group set a grant.
+    if (isset ($groups['node']) && !empty($groups)) {
+      foreach ($groups['node'] as $gid => $value) {
+        $grants[] = array(
+          'realm' => 'workbench_moderation_og',
+          'gid' => $value,
+          'grant_view' => 1,
+          'grant_update' => 0,
+          'grant_delete' => 0,
+          'priority' => 2,
+        );
+      }
+      return $grants;
     }
-    return $grants;
   }
 }
 

@@ -9,8 +9,8 @@ Project maintainers
 The Entity translation maintainers oversee the development of the project as a
 whole. The project maintainers for Entity translation are:
 
-- Francesco Placella 'plach' <https://www.drupal.org/u/plach>
-- Daniel F. Kudwien 'sun' <https://www.drupal.org/u/sun>
+- Francesco Placella 'plach' <http://drupal.org/user/183211>
+- Daniel F. Kudwien 'sun' <http://drupal.org/user/54136>
 
 
 Component maintainers
@@ -25,15 +25,14 @@ http://drupal.org/node/363367 to find out how to become a component maintainer.
 Current component maintainers for Entity translation:
 
 Base system
-- Francesco Placella 'plach' <https://www.drupal.org/u/plach>
-- Benedikt Forchhammer 'bforchhammer' <https://www.drupal.org/u/bforchhammer>
-- Stefanos Petrakis 'stefanos.petrakis' <https://www.drupal.org/u/stefanospetrakis>
+- Francesco Placella 'plach' <http://drupal.org/user/183211>
+- Benedikt Forchhammer 'bforchhammer' <http://drupal.org/user/216396>
 
 Menu integration
-- Benedikt Forchhammer 'bforchhammer' <https://www.drupal.org/u/bforchhammer>
+- Benedikt Forchhammer 'bforchhammer' <http://drupal.org/user/216396>
 
 Views integration
-- Fabian Sörqvist 'fabsor' <https://www.drupal.org/u/fabsor>
+- Fabian Sörqvist 'fabsor' <http://drupal.org/user/255704>
 
 Node translation upgrade
-- Francesco Placella 'plach' <https://www.drupal.org/u/plach>
+- Francesco Placella 'plach' <http://drupal.org/user/183211>

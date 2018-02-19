@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * EUROPA search module.
@@ -76,7 +75,6 @@ function nexteuropa_europa_search_search_form() {
   $form['search_input_group']['#suffix'] = '</div>';
 
   $form['search_input_group']['QueryText'] = array(
-    '#title' => t('Search this website'),
     '#type' => 'textfield',
     '#attributes' => array('placeholder' => t('Search')),
     '#weight' => 10,

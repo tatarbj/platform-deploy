@@ -1,8 +1,7 @@
 <?php
-
 /**
  * @file
- * Contains a views plugin for relating entities to translation metadata.
+ * Contains the relationship plugin for relating entities to translation metadata.
  */
 
 /**
@@ -28,10 +27,7 @@ class entity_translation_handler_relationship extends views_handler_relationship
     $alias = $def['table'] . '_' . $this->table;
     // We need to add a condition on entity type to the join to avoid getting
     // relationships to entities with other types.
-    $join->extra = array(
-      array('field' => 'entity_type', 'value' => $def['entity type']),
-    );
+    $join->extra = "$alias.entity_type = '{$def['entity type']}'";
     $this->alias = $this->query->add_relationship($alias, $join, 'entity_translation', $this->relationship);
   }
-
 }

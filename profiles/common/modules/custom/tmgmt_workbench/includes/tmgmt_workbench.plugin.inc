@@ -44,6 +44,7 @@ class TMGMTWorkbenchSourcePluginController extends TMGMTEntitySourcePluginContro
   public function saveTranslation(TMGMTJobItem $job_item) {
     $job = tmgmt_job_load($job_item->tjid);
     $node = node_load($job_item->item_id);
+    $vid = $node->vid;
 
     // Get current node revision.
     $current_revision = $this->getModerationRevision($node);
@@ -51,7 +52,7 @@ class TMGMTWorkbenchSourcePluginController extends TMGMTEntitySourcePluginContro
 
     // Change the active language of the entity to the target language.
     $handler = entity_translation_get_handler($job_item->item_type, $current_revision);
-    $handler->setActiveLanguage($job_item->getJob()->target_language);
+    $handler->setFormLanguage($job_item->getJob()->target_language);
 
     // Save current node revision.
     node_save($current_revision);
@@ -67,6 +68,10 @@ class TMGMTWorkbenchSourcePluginController extends TMGMTEntitySourcePluginContro
     $handler->setTranslation($translation);
     $handler->saveTranslations();
 
+    // Make sure we restore the original node revision.
+    $node = node_load($node->nid, $vid);
+    node_save($node);
+
     // Accept the translation job.
     $job_item->accepted();
   }
@@ -75,12 +80,12 @@ class TMGMTWorkbenchSourcePluginController extends TMGMTEntitySourcePluginContro
    * Get moderation state.
    *
    * @param object $node
-   *   Node object.
+   *    Node object.
    * @param string $type
-   *   Moderation type.
+   *    Moderation type.
    *
-   * @return string|false
-   *   Moderation state or FALSE.
+   * @return string|FALSE
+   *    Moderation state or FALSE.
    */
   private function getModerationState($node, $type = 'current') {
     if (is_object($node) && property_exists($node, 'workbench_moderation') && isset($node->workbench_moderation[$type])) {
@@ -94,12 +99,12 @@ class TMGMTWorkbenchSourcePluginController extends TMGMTEntitySourcePluginContro
    * Get moderation revision.
    *
    * @param object $node
-   *   Node object.
+   *    Node object.
    * @param string $type
-   *   Moderation type.
+   *    Moderation type.
    *
-   * @return object|false
-   *   Current node object or FALSE.
+   * @return object|FALSE
+   *    Current node object or FALSE.
    */
   private function getModerationRevision($node, $type = 'current') {
     if (is_object($node) && property_exists($node, 'workbench_moderation') && isset($node->workbench_moderation[$type])) {

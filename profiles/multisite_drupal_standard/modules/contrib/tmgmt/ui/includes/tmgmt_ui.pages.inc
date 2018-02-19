@@ -932,7 +932,6 @@ function tmgmt_ui_cart_content($form, &$form_state) {
     '#type' => 'submit',
     '#value' => t('Empty cart'),
     '#submit' => array('tmgmt_ui_cart_empty_cart_form_submit'),
-    '#access' => tmgmt_ui_cart_get()->count(),
   );
 
   return $form;

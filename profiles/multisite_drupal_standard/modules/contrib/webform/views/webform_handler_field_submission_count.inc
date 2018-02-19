@@ -9,11 +9,7 @@
  * Field handler to present the submission count of a node to the user.
  */
 class webform_handler_field_submission_count extends views_handler_field {
-
-  /**
-   *
-   */
-  public function construct() {
+  function construct() {
     parent::construct();
     $this->count_type = $this->definition['count_type'];
 
@@ -26,27 +22,18 @@ class webform_handler_field_submission_count extends views_handler_field {
     }
   }
 
-  /**
-   *
-   */
-  public function option_definition() {
+  function option_definition() {
     $options = parent::option_definition();
     $options['label'] = array('default' => '# of Submissions', 'translatable' => TRUE);
     return $options;
   }
 
-  /**
-   *
-   */
-  public function query() {
+  function query() {
     $this->ensure_my_table();
     $this->add_additional_fields();
   }
 
-  /**
-   *
-   */
-  public function render($values) {
+  function render($values) {
     global $user;
 
     $output = NULL;
@@ -73,5 +60,4 @@ class webform_handler_field_submission_count extends views_handler_field {
 
     return $output;
   }
-
 }

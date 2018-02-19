@@ -17,7 +17,7 @@ use function bovigo\assert\assert;
  */
 class MultisiteWysiwygSubContext extends RawDrupalContext implements DrupalSubContextInterface {
 
-   use \Drupal\nexteuropa\Context\ContextUtil;
+  use \Drupal\nexteuropa\Context\ContextUtil;
 
   /**
    * The Drupal driver manager.
@@ -182,17 +182,17 @@ class MultisiteWysiwygSubContext extends RawDrupalContext implements DrupalSubCo
    *
    * @When /^I click the "([^"]*)" link in the "([^"]*)" row of the "([^"]*)" "([^"]*)" modal dialog$/
    */
-  public function iClickTheLinkInTheRowOfTheModalDialog($link, $rowText, $instance_id, $modal_id) {
+  public function iClickTheLinkInTheRowOfTheModalDialog($link, $row_text, $instance_id, $modal_id) {
     $field_id = $this->getFieldIdFromInputLabel($instance_id);
     $instance_id = $this->getWysiwygInstance($field_id);
     $modal_element = $this->getWysiwygModalDialog($instance_id, $modal_id, $field_id);
-    $row_element = $this->getWysiwygModalTableRow($modal_element, $rowText);
+    $row_element = $this->getWysiwygModalTableRow($modal_element, $row_text);
     if ($link_element = $row_element->findLink($link)) {
       // Click the link and return.
       $link_element->click();
       return;
     }
-    throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
+    throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $row_text, $link, $this->getSession()->getCurrentUrl()));
   }
 
   /**

@@ -14,9 +14,7 @@ files[] = tmgmt_node_ui.overview.test
 files[] = views/tmgmt_node_ui_handler_filter_node_translatable_types.inc
 files[] = views/tmgmt_node_ui_handler_field_jobs.inc
 
-; Information added by Drupal.org packaging script on 2016-07-01
-version = "7.x-1.0-rc2"
-core = "7.x"
+; Information added by drush on 2015-11-20
+version = "7.x-1.0-rc1+18-dev"
 project = "tmgmt"
-datestamp = "1467358441"
-
+datestamp = "1447976287"

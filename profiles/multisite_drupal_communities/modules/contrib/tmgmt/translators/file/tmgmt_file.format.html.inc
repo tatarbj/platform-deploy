@@ -25,9 +25,10 @@ class TMGMTFileFormatHTML implements TMGMTFileFormatInterface {
   /**
    * {@inheritdoc}
    */
-  public function export(TMGMTJob $job, $conditions = array()) {
+  public function export(TMGMTJob $job) {
+
     $items = array();
-    foreach ($job->getItems($conditions) as $item) {
+    foreach ($job->getItems() as $item) {
       $data = array_filter(tmgmt_flatten_data($item->getData()), '_tmgmt_filter_data');
       foreach ($data as $key => $value) {
         $items[$item->tjiid][$this->encodeIdSafeBase64($item->tjiid . '][' . $key)] = $value;
@@ -44,7 +45,7 @@ class TMGMTFileFormatHTML implements TMGMTFileFormatInterface {
   /**
    * {@inheritdoc}
    */
-  public function import($imported_file, $is_file = TRUE) {
+  public function import($imported_file) {
     $dom = new DOMDocument();
     $dom->loadHTMLFile($imported_file);
     $xml = simplexml_import_dom($dom);

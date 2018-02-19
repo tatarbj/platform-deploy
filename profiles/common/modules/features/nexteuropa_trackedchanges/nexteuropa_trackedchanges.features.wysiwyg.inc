@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * nexteuropa_trackedchanges.features.wysiwyg.inc
@@ -88,7 +87,7 @@ comment/*',
       'preformatted' => FALSE,
       'convert_fonts_to_spans' => TRUE,
       'remove_linebreaks' => TRUE,
-      'apply_source_formatting' => TRUE,
+      'apply_source_formatting' => FALSE,
       'paste_auto_cleanup_on_paste' => FALSE,
       'css_setting' => 'theme',
       'css_path' => NULL,

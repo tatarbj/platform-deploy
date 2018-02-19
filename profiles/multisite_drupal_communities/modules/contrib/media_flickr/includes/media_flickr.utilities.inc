@@ -58,8 +58,8 @@ function _media_flickr_sets_request($method, $args = array()) {
     return array();
   }
 
-  $args['api_key'] = trim(variable_get('media_flickr_api_key', ''));
-  if ($secret = trim(variable_get('media_flickr_api_secret', ''))) {
+  $args['api_key'] = trim(media_flickr_variable_get('api_key'));
+  if ($secret = trim(media_flickr_variable_get('api_secret'))) {
     $args['secret'] = md5($secret);
   }
   $args['method'] = $method;
@@ -103,9 +103,9 @@ function media_flickr_unserialize_xml($xml) {
 function _media_flickr_error_check() {
   static $checked;
   if (is_null($checked)) {
-    if (variable_get('media_flickr_api_key', '') == '') {
+    if (media_flickr_variable_get('api_key') == '') {
       $error = 'You do not yet have a Flickr API key set. You will need to !apply and enter your key at the !settings before Flickr images may be displayed.';
-      $arguments = array('!apply' => l(t('apply for a Flickr API key'), MEDIA_FLICKR_API_APPLICATION_URL), '!settings' => l(t('Flickr administration page'), 'admin/config/media/media-flickr'));
+      $arguments = array('!apply' => l(t('apply for a Flickr API key'), MEDIA_FLICKR_API_APPLICATION_URL), '!settings' => l(t('Flickr administration page'), 'admin/config/media/media_flickr'));
       if (user_access('administer site configuration')) {
         drupal_set_message(t($error, $arguments), 'error');
       }
@@ -238,16 +238,6 @@ function _media_flickr_build_uri($parts) {
   }
 }
 
-/**
- * Flickr media parse helper function. Search the original url for valid data.
- *
- * @param $url
- *   The original URL or embed code to parse.
- * @param array $options
- *
- * @return string
- *   The unique URI for the file, based on its stream wrapper, or NULL.
- */
 function _media_flickr_media_parse($url, $options = array()) {
   // The following are single images.
   $patterns = array(
@@ -262,7 +252,7 @@ function _media_flickr_media_parse($url, $options = array()) {
       return _media_flickr_build_uri(array('u' => $matches[1], 'p' => $matches[2]));
     }
   }
-  // Next we look for photosets/albums.
+  // Next we look for photosets.
   $patterns = array(
     '@flickr\.com/photos/([0-9A-Za-z\@\&\$_-]+)/sets/([0-9]+)@i',
     '@flickr\.com/photos/([0-9A-Za-z\@\&\$_-]+)/albums/([0-9]+)@i',

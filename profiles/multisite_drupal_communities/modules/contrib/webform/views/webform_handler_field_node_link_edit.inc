@@ -10,19 +10,13 @@
  */
 class webform_handler_field_node_link_edit extends views_handler_field_node_link {
 
-  /**
-   *
-   */
-  public function option_definition() {
+  function option_definition() {
     $options = parent::option_definition();
     $options['subpath'] = array('default' => '');
     return $options;
   }
 
-  /**
-   *
-   */
-  public function options_form(&$form, &$form_state) {
+  function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     $form['subpath'] = array(
       '#type' => 'textfield',
@@ -35,7 +29,7 @@ class webform_handler_field_node_link_edit extends views_handler_field_node_link
   /**
    * Renders the link.
    */
-  public function render_link($node, $values) {
+  function render_link($node, $values) {
     // Ensure node is webform-enabled and user has access to edit this node.
     if (!in_array($node->type, webform_node_types()) || !node_access('update', $node)) {
       return;

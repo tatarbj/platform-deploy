@@ -18,7 +18,7 @@ class context_reaction_menu extends context_reaction {
         list($menu_name, $mlid) = explode(':', $id);
         // Store the title each menu for reference.
         if ($mlid == '0') {
-          $menu_names[$menu_name] = check_plain($link);
+          $menu_names[$menu_name] = $link;
         }
         else {
           if (!is_array($link)) {
@@ -26,21 +26,19 @@ class context_reaction_menu extends context_reaction {
           }
           $identifier = $link['link_path'];
           $root_menu = $menu_names[$menu_name];
-          while (isset($options[$root_menu][$menu_name . ':' . $identifier])) {
+          while (isset($options[$root_menu][$identifier])) {
             $identifier .= "'";
           }
           $options[$root_menu][$menu_name . ':' . $identifier] = $link['title'];
         }
       }
     }
-    $menu_count = count($options, COUNT_RECURSIVE);
     return array(
       '#title' => $this->title,
       '#description' => $this->description,
       '#options' => $options,
       '#type' => 'select',
       '#multiple' => TRUE,
-      '#size' => $menu_count > 20 ? 20 : $menu_count,
       '#default_value' => $this->fetch_from_context($context),
     );
   }

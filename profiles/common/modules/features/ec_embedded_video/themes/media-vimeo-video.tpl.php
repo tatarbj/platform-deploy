@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Template file for theme('media_vimeo_video').
@@ -17,13 +16,8 @@
  *  $title - The Media: YouTube file's title.
  *  $alternative_content - Text to display for browsers that don't support
  *  iframes.
- *  $no_wrapper - If TRUE, video's wrappers are not displayed.
  */
 ?>
-<?php if (!$no_wrapper): ?>
-  <div class="<?php print $classes; ?> media-vimeo-<?php print $id; ?>">
-<?php endif; ?>
+<div class="<?php print $classes; ?> media-vimeo-<?php print $id; ?>">
   <iframe class="media-vimeo-player" <?php print $api_id_attribute; ?>width="<?php print $width; ?>" height="<?php print $height; ?>" title="<?php print $title; ?>" src="<?php print $ec_embedded_video_url; ?>" frameborder="0" allowfullscreen><?php print $alternative_content; ?></iframe>
-<?php if (!$no_wrapper): ?>
-  </div>
-<?php endif; ?>
+</div>

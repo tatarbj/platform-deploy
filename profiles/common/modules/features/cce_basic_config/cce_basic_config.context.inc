@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * cce_basic_config.context.inc
@@ -33,6 +32,12 @@ function cce_basic_config_context_default_contexts() {
           'region' => 'tools',
           'weight' => 1,
         ),
+        'create-content-button' => array(
+          'module' => 'multisite_create_button',
+          'delta' => 'create-content-button',
+          'region' => 'tools',
+          'weight' => '2',
+        ),
         'locale-language' => array(
           'module' => 'locale',
           'delta' => 'language',
@@ -52,7 +57,7 @@ function cce_basic_config_context_default_contexts() {
           'weight' => '-11',
         ),
         'print-print-links' => array(
-          'module' => 'print_ui',
+          'module' => 'print',
           'delta' => 'print-links',
           'region' => 'content_bottom',
           'weight' => '-10',
@@ -67,7 +72,7 @@ function cce_basic_config_context_default_contexts() {
           'module' => 'menu',
           'delta' => 'menu-service-tools',
           'region' => 'header_top',
-          'weight' => '-9',
+          'weight' => -9,
         ),
         'footer' => array(
           'module' => 'cce_basic_config',

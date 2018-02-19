@@ -10,7 +10,7 @@ dependencies[] = entity
 dependencies[] = registry_autoload
 registry_autoload[] = PSR-4
 
-; Information added by drush on 2016-12-09
-version = "7.x-1.x-dev"
+; Information added by drush on 2017-03-30
+version = "2b29abc8a34f051fbb82c47deeb02e4456faf995"
 project = "integration"
-datestamp = "1481286319"
+datestamp = "1490881482"

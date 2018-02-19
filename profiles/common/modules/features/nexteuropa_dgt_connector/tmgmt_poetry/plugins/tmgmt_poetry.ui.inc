@@ -211,12 +211,11 @@ class TMGMTPoetryTranslatorUIController extends TMGMTDefaultTranslatorUIControll
           ->execute()
           ->fetchAssoc();
         if (!empty($result)) {
-          $options[$language->language]['state'] = empty($result['status']) ? t('Not sent') : $result['status'];
-          $options[$language->language]['delai'] = empty($result['delai']) ? '' : $result['delai'];
-
+          $options[$language->language]['state'] = $result['status'];
+          $options[$language->language]['delai'] = $result['delai'];
         }
         if (in_array($language_job_item->state, array(TMGMT_JOB_ITEM_STATE_REVIEW, TMGMT_JOB_ITEM_STATE_ACCEPTED))) {
-          $options[$language->language]['operations'] = l(t('View'), 'admin/tmgmt/items/' . $language_job_item->tjiid, array('query' => array('destination' => 'admin/tmgmt/jobs/' . $job->tjid)));
+          $options[$language->language]['operations']  = l(t('View'), 'admin/tmgmt/items/' . $language_job_item->tjiid, array('query' => array('destination' => 'admin/tmgmt/jobs/' . $job->tjid)));
         }
       }
 
@@ -250,7 +249,7 @@ class TMGMTPoetryTranslatorUIController extends TMGMTDefaultTranslatorUIControll
     // This should work only for new translation requests to prevent an impact
     // off stored in session language array.
     if (is_null($job->settings)) {
-      $chosen_languages = _tmgmt_poetry_workbench_get_request_languages();
+      $chosen_languages = _tmgmt_workbench_get_request_languages();
       foreach ($chosen_languages as $lg_code => $language) {
         if ($lg_code !== 'main') {
           $default_value[$language] = $language;
@@ -303,9 +302,8 @@ class TMGMTPoetryTranslatorUIController extends TMGMTDefaultTranslatorUIControll
       '#default_value' => (!empty($job->settings['contacts']['responsable']) ? $job->settings['contacts']['responsable'] : $contacts['responsable']),
     );
 
-    // Load translator settings from submitted job: Organization.
-    $new_org_info = (isset($job->settings['organization']) || array_key_exists('organization', (array) $job->settings));
-    $organization = ($new_org_info) ? $job->settings['organization'] : $translator->getSetting('organization');
+    // Load translator settings : Organization.
+    $organization = $translator->getSetting('organization');
     $form['organization'] = array(
       '#type' => 'fieldset',
       '#title' => t('Organization'),
@@ -338,7 +336,7 @@ class TMGMTPoetryTranslatorUIController extends TMGMTDefaultTranslatorUIControll
     $form['delai'] = array(
       '#type' => 'date_popup',
       '#title' => t('Requested delivery date'),
-      '#default_value' => !empty($job->settings['delai']) ? $job->settings['delai'] : '',
+      '#default_value' => '',
       '#date_format' => 'd/m/Y',
       '#date_year_range' => '-0:+1',
       '#required' => TRUE,

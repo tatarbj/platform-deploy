@@ -5,17 +5,11 @@
  * Webform exporter for creating CSV/TSV delimited files.
  */
 
-/**
- *
- */
 class webform_exporter_delimited extends webform_exporter {
   public $line_ending;
   public $delimiter;
 
-  /**
-   *
-   */
-  public function __construct($options) {
+  function __construct($options) {
     $this->line_ending = webform_variable_get('webform_csv_line_ending');
     $this->delimiter = isset($options['delimiter']) ? $options['delimiter'] : ',';
     // Convert tabs.
@@ -26,10 +20,7 @@ class webform_exporter_delimited extends webform_exporter {
     parent::__construct($options);
   }
 
-  /**
-   *
-   */
-  public function add_row(&$file_handle, $data, $row_count) {
+  function add_row(&$file_handle, $data, $row_count) {
     foreach ($data as $key => $value) {
       // Escape inner quotes and wrap all contents in new quotes.
       $data[$key] = '"' . str_replace('"', '""', $data[$key]) . '"';
@@ -42,10 +33,7 @@ class webform_exporter_delimited extends webform_exporter {
     @fwrite($file_handle, $row);
   }
 
-  /**
-   *
-   */
-  public function set_headers($filename) {
+  function set_headers($filename) {
     parent::set_headers($filename);
 
     // Convert tabs.
@@ -61,5 +49,4 @@ class webform_exporter_delimited extends webform_exporter {
     drupal_add_http_header('Content-Type', $content_type);
     drupal_add_http_header('Content-Disposition', "attachment; filename=$filename.$extension");
   }
-
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Contains ECEmbeddedImageSubContext.
@@ -13,11 +12,11 @@ use \Drupal\DrupalExtension\Context\DrupalSubContextBase;
 class ECEmbeddedImageSubContext extends DrupalSubContextBase {
 
   /**
-   * Indicates if permissions was set up for test pruposes.
+   * Indicates if the custom content type was set up.
    *
    * @var bool
    */
-  private $areTestPermissionsSet = FALSE;
+  private $contentTypeWasSetUp = FALSE;
 
   /**
    * Creates a test_media_gallery content type with a test_flickr_set field.
@@ -87,22 +86,33 @@ class ECEmbeddedImageSubContext extends DrupalSubContextBase {
       ]
     );
 
-    $this->areTestPermissionsSet = TRUE;
+    $this->contentTypeWasSetUp = TRUE;
   }
 
   /**
-   * Removes the permissions related to the test_media_gallery content type.
-   *
-   * @see createMediaGalleryContentType()
+   * Removes the test_media_gallery content type and related permissions.
    *
    * @AfterScenario
    */
-  public function resetMediaGalleryPermission() {
-    if (!$this->areTestPermissionsSet) {
+  public function removeMediaGalleryContentType() {
+    if (!$this->contentTypeWasSetUp) {
       return;
     }
 
-    $this->areTestPermissionsSet = FALSE;
+    $this->contentTypeWasSetUp = FALSE;
+
+    $instance = field_info_instance('node', 'test_flickr_set', 'test_media_gallery');
+
+    if ($instance) {
+      field_delete_instance($instance);
+    }
+
+    field_delete_field('test_flickr_set');
+    field_purge_batch(10);
+
+    if (node_type_get_type('test_media_gallery')) {
+      node_type_delete('test_media_gallery');
+    }
 
     $contributor_role = user_role_load_by_name('contributor');
     user_role_revoke_permissions(

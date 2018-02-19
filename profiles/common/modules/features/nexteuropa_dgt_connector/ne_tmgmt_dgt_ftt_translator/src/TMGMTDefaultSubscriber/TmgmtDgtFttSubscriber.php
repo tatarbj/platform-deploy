@@ -115,6 +115,7 @@ class TMGMTDgtFttSubscriber implements EventSubscriberInterface {
       /** @var \TMGMTJob $job */
       foreach ($jobs as $job) {
         $translator = $job->getTranslator();
+
         if ('dgt_ftt' != $translator->plugin) {
           continue;
         }

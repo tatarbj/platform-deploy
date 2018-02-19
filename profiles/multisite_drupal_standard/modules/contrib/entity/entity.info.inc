@@ -148,8 +148,7 @@ class EntityDefaultMetadataController {
 function entity_metadata_convert_schema($table) {
   $schema = drupal_get_schema($table);
   $properties = array();
-  $fields = is_array($schema['fields']) ? $schema['fields'] : array();
-  foreach ($fields as $name => $info) {
+  foreach ($schema['fields'] as $name => $info) {
     if ($type = _entity_metadata_convert_schema_type($info['type'])) {
       $properties[$name] = array(
         'type' => $type,
