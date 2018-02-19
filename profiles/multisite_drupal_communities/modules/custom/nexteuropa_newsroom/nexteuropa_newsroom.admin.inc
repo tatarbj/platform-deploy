@@ -87,7 +87,7 @@ function nexteuropa_newsroom_admin_settings($form, &$form_state) {
     '#default_value' => variable_get('nexteuropa_newsroom_legacy', 1),
   ];
 
-  $types = NexteuropaNewsroomHelper::getNewsroomTypes();
+  $types = NexteuropaNewsroomVocabularyHelper::getNewsroomTypes();
 
   if (!empty($types)) {
     $form['newsroom_paths'] = [
@@ -119,12 +119,13 @@ function nexteuropa_newsroom_admin_settings($form, &$form_state) {
         $parent = pathauto_cleanstring($parent->name) . '/';
       }
 
-      $form['newsroom_paths']['nexteuropa_' . $type_name . '_rootpath'] = [
+      $path_var_name = 'nexteuropa_newsroom_' . $type_name . '_root';
+      $form['newsroom_paths'][$path_var_name] = [
         '#type' => 'textfield',
         '#title' => t('Pattern for %type', ['%type' => $type_name]),
         '#required' => FALSE,
         '#description' => t('Aliases pattern for the %type_name topic.', ['%type_name' => $type_name]),
-        '#default_value' => variable_get('nexteuropa_newsroom_' . $type_name . '_root', $parent . $type_name),
+        '#default_value' => variable_get($path_var_name, $parent . $type_name),
         '#element_validate' => ['_nexteuropa_newsroom_admin_type_root_validate'],
       ];
     }
@@ -221,7 +222,7 @@ function nexteuropa_newsroom_admin_settings($form, &$form_state) {
   $form['newsroom_universe']['nexteuropa_newsroom_allowed_ips'] = [
     '#type' => 'textfield',
     '#title' => t('IP addresses allowed for import'),
-    '#default_value' => variable_get('nexteuropa_newsroom_allowed_ips', '127.0.0.1'),
+    '#default_value' => variable_get('nexteuropa_newsroom_allowed_ips', '127.0.0.1,158.167.165.192,158.167.165.191,158.167.209.222,158.167.240.147,158.167.209.223,158.167.210.159,158.167.210.158'),
     '#description' => t('Comma separated list of IP addresses where the importer can be launched from.'),
   ];
 
@@ -657,7 +658,7 @@ function _nexteuropa_newsroom_admin_type_root_validate($element, &$form_state) {
  *   Pathes.
  */
 function _nexteuropa_newsroom_admin_reset_paths($form, &$form_state) {
-  foreach (NexteuropaNewsroomHelper::getNewsroomTypes() as $type) {
+  foreach (NexteuropaNewsroomVocabularyHelper::getNewsroomTypes() as $type) {
     $type_name = pathauto_cleanstring($type->name);
     $parents = taxonomy_get_parents($type->tid);
     $parent = '';
@@ -900,20 +901,7 @@ function _nexteuropa_newsroom_admin_prepare_check(array $previous, array $input)
  * Rebuilds multilingual importers.
  */
 function _nexteuropa_newsroom_admin_rebuild_importers() {
-  // Remove importers.
-  $importers = NexteuropaNewsroomHelper::returnImporters();
-
-  foreach ($importers as $importer) {
-    // WE drop all tampers for the current importer.
-    db_delete('feeds_tamper')
-      ->condition('importer', $importer)
-      ->execute();
-    feeds_importer($importer)->delete();
-    // Recreate them.
-    $importer = NexteuropaNewsroomBuilder::buildImporter($importer);
-    $importer->generateImporter();
-  }
-
+  NexteuropaNewsroomImporterHelper::rebuildImporters();
   drupal_set_message(t('Newsroom importers have been successfully generated.'));
 }
 
@@ -922,9 +910,9 @@ function _nexteuropa_newsroom_admin_rebuild_importers() {
  */
 function _nexteuropa_newsroom_import_importers() {
   // Run the multilingual imports if required.
-  $importers = NexteuropaNewsroomHelper::returnImporters();
+  $importers = NexteuropaNewsroomImporterHelper::returnImporters();
   foreach ($importers as $importer) {
-    NexteuropaNewsroomHelper::runFeedImporter($importer);
+    NexteuropaNewsroomImporterHelper::runFeedImporter($importer);
   }
 }
 
@@ -939,10 +927,10 @@ function _nexteuropa_newsroom_import_importers() {
 function _nexteuropa_newsroom_delete_items_confirm_submit(array $form, array &$form_state) {
   if ($form_state['values']['confirm']) {
     // Delete the imported items.
-    $importers = NexteuropaNewsroomHelper::returnImporters();
+    $importers = NexteuropaNewsroomImporterHelper::returnImporters();
 
     foreach ($importers as $importer) {
-      NexteuropaNewsroomHelper::deleteItems($importer);
+      NexteuropaNewsroomImporterHelper::deleteItems($importer);
     }
 
     drupal_set_message(t('Newsroom data has been removed.'));

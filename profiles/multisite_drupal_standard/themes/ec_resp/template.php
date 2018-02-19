@@ -1004,6 +1004,7 @@ function ec_resp_menu_local_tasks(&$variables) {
 function ec_resp_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     case 'nexteuropa_europa_search_search_form':
+      $form['search_input_group']['QueryText']['#title_display'] = 'invisible';
       if (theme_get_setting('enable_interinstitutional_theme')) {
         $form['search_input_group']['europa_search_submit']['#type'] = 'image_button';
         $form['search_input_group']['europa_search_submit']['#src'] = drupal_get_path('theme', 'ec_resp') . '/images/search-button.gif';
@@ -1184,9 +1185,14 @@ function ec_resp_link($variables) {
     }
   }
   $path = ($variables['path'] == '<nolink>') ? '#' : check_plain(url($variables['path'], $variables['options']));
+
+  $variables += array('options' => array());
+  $variables['options'] += array('attributes' => array());
+  $options_attributes = drupal_attributes($variables['options']['attributes']);
+
   $output = $action_bar_before . $btn_group_before .
     '<a href="' . $path . '"' .
-    drupal_attributes($variables['options']['attributes']) . '>' . $decoration .
+    $options_attributes . '>' . $decoration .
     ($variables['options']['html'] ? $variables['text'] : check_plain($variables['text'])) .
     '</a>' . $btn_group_after . $action_bar_after;
   return $output;
@@ -1560,9 +1566,8 @@ function ec_resp_preprocess_username(&$vars) {
 /**
  * Returns HTML for a dropdown.
  */
-function ec_resp_dropdown($variables) {
+function ec_resp_dropdown(array $variables) {
   $items = $variables['items'];
-  $attributes = array();
   $output = "";
 
   if (!empty($items)) {
@@ -1571,7 +1576,6 @@ function ec_resp_dropdown($variables) {
     }
     else {
       $output .= "<ul class='dropdown-menu'>";
-      $num_items = count($items);
       foreach ($items as $i => $item) {
         $data = '';
         if (is_array($item)) {
@@ -1582,7 +1586,7 @@ function ec_resp_dropdown($variables) {
           }
         }
         else {
-          $data = $item;
+          $data = l($i, $item);
         }
         $output .= '<li>' . $data . "</li>\n";
       }

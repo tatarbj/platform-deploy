@@ -64,7 +64,7 @@ class TMGMTPoetryTranslatorPluginController extends TMGMTDefaultTranslatorPlugin
     }
 
     // If any of these are empty, the translator is not properly configured.
-    foreach ($all_settings as $key => $value) {
+    foreach ($all_settings as $value) {
       if (empty($value)) {
         return FALSE;
       }
@@ -408,13 +408,15 @@ xsi:noNamespaceSchemaLocation=\"http://intragate.ec.europa.eu/DGT/poetry_service
     }
     else {
       // If it doesn't, check the highest numero.
-      $query = db_select('poetry_map', 'pm');
+      $query = db_select('poetry_map', 'pm')
+        ->condition('annee', date("Y"));
       $query->addExpression('MAX(numero)', 'max_numero');
       $max_numero = $query->execute()
         ->fetchAssoc();
       if (!empty($max_numero['max_numero'])) {
         $query = db_select('poetry_map', 'pm')
           ->fields('pm', array('annee', 'numero', 'version', 'partie'))
+          ->condition('annee', date("Y"))
           ->condition('numero', $max_numero['max_numero'], '=');
         $query->addExpression('MAX(partie)', 'max_partie');
         $result = $query->execute()

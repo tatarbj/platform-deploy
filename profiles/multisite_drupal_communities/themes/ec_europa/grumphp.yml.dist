@@ -1,0 +1,12 @@
+imports:
+  - { resource: vendor/ec-europa/oe-code-review/dist/drupal-conventions.yml }
+parameters:
+  tasks.phpcs.ignore_patterns:
+    - build/
+    - vendor/
+  tasks.phpmd.exclude:
+    - build/
+    - vendor/
+    - templates/
+  tasks.git_commit_message.matchers:
+    - '/^(Issue #\d+|#\d+|EUTHEME-\d+|NEPT-\d+): [A-Z].+\./'

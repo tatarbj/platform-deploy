@@ -178,51 +178,46 @@ function nexteuropa_newsroom_newsletter_subscription_form($form, &$form_state) {
 
   $args = $form_state['build_info']['args'][0];
   $form = [];
-  $form['#prefix'] = '<div class="CTAnewsletter">';
+  $form['#prefix'] = '<div class="newsroom-newsletter-subscription">';
   $form['#suffix'] = '</div>';
   $form['#token'] = FALSE;
   $form['#action'] = NexteuropaNewsroomHelper::getNewsroomUrl('subscription-quick-generic.cfm');
   $form['intro'] = [
-    '#markup' => '<div class="title">' . $args['name'] . '</div>',
+    '#markup' => '<div class="newsroom-newsletter-subscription-title">' . t('Subscribe to <em>@name</em>', ['@name' => $args['name']]) . '&nbsp;-&nbsp;<a href="' . NexteuropaNewsroomHelper::getNewsroomUrl('newsletter-specific-archive.cfm?serviceId=' . $args['tid']) . '">' . t('See previous issues') . '</a></div>',
   ];
-
-  $form['feedback'] = [
-    '#markup' => '<div class="feedback"></div>',
+  $form['label'] = [
+    '#markup' => '<label for="email">' . t('Subscribe email') . '</label><div class="form-group newsroom-subscription-form-group">',
   ];
-
   $form['email'] = [
-    '#prefix' => '<div class="inputMail">',
+    '#theme_wrappers' => [],
+    '#prefix' => '<div class="form-control__wrapper">',
     '#suffix' => '</div>',
     '#type' => 'textfield',
     '#attributes' => [
       'placeholder' => t('Your e-mail'),
-      'class' => [],
+      'class' => ['form-control'],
     ],
   ];
 
-  $form['submit_email_prefix'] = [
-    '#markup' => '<div class="inputSubscribe">',
-  ];
-
   $form['submit_email'] = [
-    '#type' => 'button',
+    '#prefix' => '<span class="input-group">',
+    '#suffix' => '</span>',
+    '#type' => 'submit',
     '#value' => t('Subscribe'),
     '#ajax' => [
       'callback' => '_nexteuropa_newsroom_newsletter_subscription_block_form_ajax',
     ],
+    '#attributes' => [
+      'class' => ['btn btn-primary'],
+    ],
   ];
-
-  $form['submit_email_submit'] = [
+  $form['form_end'] = [
     '#markup' => '</div>',
   ];
 
   $form['service_id'] = [
     '#type' => 'hidden',
     '#value' => $args['tid'],
-  ];
-
-  $form['previous'] = [
-    '#markup' => '<div class="linkPreviousIssues"><a href="' . NexteuropaNewsroomHelper::getNewsroomUrl('newsletter-specific-archive.cfm?serviceId=' . $args['tid']) . '">' . t('Previous issues') . '</a></div>',
   ];
 
   return $form;
@@ -272,7 +267,6 @@ function _nexteuropa_newsroom_send_subscription_request($url, $service_id, $emai
   if (!empty($request->data)) {
     $data = drupal_json_decode($request->data);
   }
-
   return !empty($data['subscription']) ? $data['subscription'] : NULL;
 }
 
@@ -304,7 +298,7 @@ function _nexteuropa_newsroom_newsletter_subscription_block_form_ajax($form, &$f
   }
 
   $replacement = theme('status_messages', ['display' => NULL]);
-  $commands[] = ajax_command_replace($selector . ' .feedback', '<div class="feedback">' . $replacement . '</div>');
+  $commands[] = ajax_command_replace($selector . ' .form-group', '<div class="form-group">' . $replacement . '</div>');
 
   return ['#type' => 'ajax', '#commands' => $commands];
 }
@@ -377,9 +371,9 @@ function _nexteuropa_newsroom_agenda_form_submit(&$form, &$form_state) {
   $topic_id = !empty($form_state['values']['topic_id']) ? $form_state['values']['topic_id'] : NULL;
   $type_id = !empty($form_state['values']['type_id']) ? $form_state['values']['type_id'] : NULL;
   $date = !empty($form_state['values']['current_date']) ? $form_state['values']['current_date'] : NexteuropaNewsroomHelper::getFormatedDate();
-  $topic = NexteuropaNewsroomHelper::getNewsroomTopic($topic_id);
-  $type = NexteuropaNewsroomHelper::getNewsroomType($type_id);
-  $agenda = NexteuropaNewsroomBuilder::buildAgenda(NexteuropaNewsroomAgenda::AGENDA_VIEW_SCHEDULE, $type, $topic, new DateTime($date));
+  $topic = NexteuropaNewsroomVocabularyHelper::getNewsroomTopic($topic_id);
+  $type = NexteuropaNewsroomVocabularyHelper::getNewsroomType($type_id);
+  $agenda = new NexteuropaNewsroomAgenda($type, $topic, new DateTime($date));
 
   drupal_goto($agenda->getNavigationUrl(NexteuropaNewsroomHelper::checkDateFormat($date)), [], 301);
 }
@@ -478,7 +472,8 @@ function nexteuropa_newsroom_unsubscription_newsletter_form($form, $form_state, 
  *   Ajax callback array.
  */
 function _nexteuropa_newsroom_newsletter_subscription_page_form_ajax($form, &$form_state) {
-  $subscription = _nexteuropa_newsroom_send_subscription_request($form['#action'], $form_state['values']['service_id'], $form_state['values']['email']);
+  // @codingStandardsIgnoreLine
+  $subscription = _nexteuropa_newsroom_send_subscription_request($form['#action'], $form_state['values']['service_id'], $form_state['input']['email']);
   $message = $subscription['feedbackMessage'];
   if ($subscription['status'] == 'Failed') {
     $type = 'error';
@@ -547,13 +542,11 @@ function _nexteuropa_newsroom_newsletter_unsubscription_form_ajax($form, &$form_
  *   Start date.
  * @param string $end_date
  *   End date.
- * @param string $ec_content
- *   Is EC content.
  *
  * @return array
  *   Rendable form array.
  */
-function nexteuropa_newsroom_page_filter_form($form, &$form_state, $type = NULL, $topic = NULL, $start_date = NULL, $end_date = NULL, $ec_content = NEXTEUROPA_NEWSROOM_EC) {
+function nexteuropa_newsroom_page_filter_form($form, &$form_state, $type = NULL, $topic = NULL, $start_date = NULL, $end_date = NULL) {
   $topic_options = NexteuropaNewsroomHelper::getNewsroomTopicOptions(NexteuropaNewsroomHelper::getPageUsedTopicsIds());
 
   $form = [];
@@ -592,12 +585,6 @@ function nexteuropa_newsroom_page_filter_form($form, &$form_state, $type = NULL,
     '#element_validate' => NULL,
     '#validate' => ['_nexteuropa_newsroom_validate_date'],
   ];
-  $form['ec_content'] = [
-    '#type' => 'checkbox',
-    '#title' => t('EC content'),
-    '#default_value' => empty($ec_content) || $ec_content == NEXTEUROPA_NEWSROOM_EC ? 1 : 0,
-    '#weight' => 1,
-  ];
   $form['button'] = [
     '#type' => 'submit',
     '#submit' => ['_nexteuropa_newsroom_page_filter_form_submit'],
@@ -623,9 +610,8 @@ function _nexteuropa_newsroom_page_filter_form_submit(&$form, &$form_state) {
   $type_id = !empty($form_state['values']['type_id']) ? $form_state['values']['type_id'] : NULL;
   $start_date = !empty($form_state['values']['start_date']) ? $form_state['values']['start_date'] : NULL;
   $end_date = !empty($form_state['values']['end_date']) ? $form_state['values']['end_date'] : NULL;
-  $ec_content = !empty($form_state['values']['ec_content']);
 
-  $newsroom_page = NexteuropaNewsroomBuilder::buildNewsroomPage($type_id, $topic_id, $start_date, $end_date, $ec_content);
+  $newsroom_page = NexteuropaNewsroomBuilder::buildNewsroomPage($type_id, $topic_id, $start_date, $end_date);
   drupal_goto($newsroom_page->getNavigationUrl(), [], 301);
 }
 
