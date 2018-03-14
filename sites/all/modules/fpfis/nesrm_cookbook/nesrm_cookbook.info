@@ -1,0 +1,6 @@
+name = NESRM Cookbook
+description = Implementation of NESRM Cookbook chapters.
+package = NESRM
+version = 7.x-1.0-alpha1
+core = 7.x
+

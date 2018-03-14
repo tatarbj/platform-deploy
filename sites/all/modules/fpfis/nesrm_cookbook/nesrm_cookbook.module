@@ -1,0 +1,157 @@
+<?php
+/**
+ * @file
+ * Source of NESRM Cookbook chapter implementations.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function nesrm_cookbook_menu() {
+  $items['admin/config/nesrm_cookbook'] = array(
+    'title' => 'NESRM Cookbook',
+    'page callback' => 'nesrm_cookbook_main_page',
+    'access arguments' => array('administer nesrm cookbook'),
+  );
+  $items['admin/config/nesrm_cookbook/chapter_one'] = array(
+    'title' => 'NESRM Cookbook - Chapter One',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nesrm_cookbook_chapter_one_execution_form'),
+    'access arguments' => array('administer nesrm cookbook'),
+    'weight' => 1,
+  );
+  $items['admin/config/nesrm_cookbook/chapter_two'] = array(
+    'title' => 'NESRM Cookbook - Chapter Two',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nesrm_cookbook_chapter_two_execution_form'),
+    'access arguments' => array('administer nesrm cookbook'),
+    'weight' => 2,
+  );
+  $items['admin/config/nesrm_cookbook/chapter_three'] = array(
+    'title' => 'NESRM Cookbook - Chapter Three',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nesrm_cookbook_chapter_three_execution_form'),
+    'access arguments' => array('administer nesrm cookbook'),
+    'weight' => 3,
+  );
+  return $items;
+}
+
+/**
+ * Main page of the NESRM Cookbook, listing the chapters.
+ */
+function nesrm_cookbook_main_page() {
+  // Placeholder for admin/config page.
+}
+
+/**
+ * Implements hook_permission().
+ */
+function nesrm_cookbook_permission() {
+  return array(
+    'administer nesrm cookbook' => array(
+      'title' => t('Administer NESRM Cookbook'),
+      'description' => t('Execute and recall NESRM Cookbook chapters.'),
+      'restrict access' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Form implementation to execute chapter one of NESRM Cookbook.
+ */
+function nesrm_cookbook_chapter_one_execution_form($form, &$form_state) {
+  // @todo Call nesrm_cookbook_chapter_one_items() to show the executed items.
+  $form['module'] = array(
+    '#prefix' => '<div id="module_wrapper">',
+    '#suffix' => '</div>',
+  );
+
+  $form['module']['module_name'] = array(
+    '#type' => 'select',
+    '#title' => t('Name of the module'),
+    '#options' => array(t('Choose a module')) + module_list(FALSE, FALSE, TRUE),
+    '#description' => t('Choose the module that has to be restricted.'),
+    '#ajax' => array(
+      'wrapper' => 'module_wrapper',
+      'callback' => '_nesrm_cookbook_chapter_one_ajax_callback',
+    )
+  );
+
+  if(isset($form_state['values']['module_name'])) {
+    foreach (module_invoke($form_state['values']['module_name'], 'permission') as $machine_name => $data) {
+      $permissions[$machine_name] = $data['title'];
+    }
+    if (count($permissions)) {
+      $form['module']['permission'] = array(
+        '#type' => 'select',
+        '#title' => t('Permissions'),
+        '#options' => $permissions,
+        '#description' => t('Choose the permission that has to be restricted.')
+      );
+      $form['module']['advisory'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Advisory'),
+        '#description' => t('Insert the id of the security advisory'),
+      );
+      $form['module']['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Execute'),
+        '#submit' => array('nesrm_cookbook_execute_chapter_one'),
+      );
+    }
+    else {
+      $form['module']['permissions'] = array(
+        '#type' => 'markup',
+        '#title' => t('Permissions'),
+        '#markup' => t("NESRM Cookbook Chapter One can't be applied."),
+      );
+    }
+  }
+
+  return $form;
+}
+
+/**
+ * AJAX callback for second level select box of Chapter oOe.
+ */
+function _nesrm_cookbook_chapter_one_ajax_callback($form, &$form_state) {
+  return render($form['module']);
+}
+
+/**
+ * Execution of NESRM Cookbook Chapter One.
+ */
+function nesrm_cookbook_execute_chapter_one($form, &$form_state) {
+  variable_set('nesrm_c1_' . $form_state['values']['advisory'], $form_state['values']['permission']);
+  // @todo Execute the change in permissions level.
+}
+
+/**
+ * Get the executed items of NESRM Cookbook Chapter one.
+ */
+function nesrm_cookbook_chapter_one_items() {
+  $result = db_select('variable', 'v')
+    ->fields('v')
+    ->condition('name', 'nesrm_c1_%', 'LIKE')
+    ->execute()
+    ->fetchAll();
+  foreach ($result as $record) {
+    $items[drupal_substr($record->name, 9)] = unserialize($record->value);
+  }
+  return $items;
+}
+
+/**
+ * Form implementation to execute chapter two of NESRM Cookbook.
+ */
+function nesrm_cookbook_chapter_two_execution_form($form, &$form_state) {
+  // @todo
+}
+
+/**
+ * Form implementation to execute chapter three of NESRM Cookbook.
+ */
+function nesrm_cookbook_chapter_three_execution_form($form, &$form_state) {
+  // @todo
+}
