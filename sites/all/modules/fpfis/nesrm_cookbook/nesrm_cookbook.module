@@ -49,6 +49,7 @@ function nesrm_cookbook_menu() {
  */
 function nesrm_cookbook_main_page() {
   // Placeholder for admin/config page.
+  return '';
 }
 
 /**
@@ -193,22 +194,6 @@ function nesrm_cookbook_chapter_one_execution_submit($form, &$form_state) {
 }
 
 /**
- * Get the executed items of NESRM Cookbook Chapter one.
- */
-function nesrm_cookbook_chapter_one_items() {
-  $result = db_select('variable', 'v')
-    ->fields('v')
-    ->condition('name', 'nesrm_c1_%', 'LIKE')
-    ->execute()
-    ->fetchAll();
-  $items = array();
-  foreach ($result as $record) {
-    $items[drupal_substr($record->name, 9)] = unserialize($record->value);
-  }
-  return $items;
-}
-
-/**
  * Confirm form for revert a chapter one execution.
  *
  * @param string $advisory
@@ -259,11 +244,27 @@ function nesrm_cookbook_chapter_three_execution_form($form, &$form_state) {
 ////// Execution and Revoke functions of NESRM Cookbook chapters.
 
 /**
+ * Get the executed items of NESRM Cookbook Chapter one.
+ */
+function nesrm_cookbook_chapter_one_items() {
+  $result = db_select('variable', 'v')
+    ->fields('v')
+    ->condition('name', 'nesrm_c1_%', 'LIKE')
+    ->execute()
+    ->fetchAll();
+  $items = array();
+  foreach ($result as $record) {
+    $items[drupal_substr($record->name, 9)] = unserialize($record->value);
+  }
+  return $items;
+}
+
+/**
  * Execution of NESRM Cookbook Chapter One.
  *
  * @param array $data
  *   Dataset to the executable advisory.
- *   Keys: advisory, module, permission, time.
+ *   Keys: advisory, module, permission.
  */
 function nesrm_cookbook_chapter_one_execution($data) {
   $excluded_roles = array();
